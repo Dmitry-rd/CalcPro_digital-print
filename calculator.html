@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор цифровой печати</title>
+    <style>
+        *{margin: 0;
+            padding: 0;
+            box-sizing: border-box;}:root{--primary: #5865F2;
+            --primary-hover: #4752C4;
+            --primary-light: #7983F5;
+            --success: #3BA55C;
+            --success-hover: #339b4f;
+            --danger: #ED4245;
+            --warning: #FFA500;
+            --bg: #F0F2F5;
+            --surface: #FFFFFF;
+            --surface-2: #F8F9FA;
+            --surface-3: #E3E5E8;
+            --border: #D1D5DB;
+            --text: #1A1D21;
+            --text-muted: #6B7280;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.07), 0 5px 10px rgba(0,0,0,0.05);
+            --radius: 10px;
+            --radius-sm: 6px;}body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            padding: 12px;}.container{max-width: 100%;
+            margin: 0 auto;}/* Блоки параметров */
+        .params-block{background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);}.block-title{font-size: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--surface-2);}.params-grid{display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;}.param-group{display: flex;
+            flex-direction: column;
+            gap: 5px;}.param-label{font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;}.param-input{width: 100%;
+            padding: 6px 8px;
+            border: 2px solid var(--surface-3);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: var(--surface);
+            color: var(--text);}.param-input:hover{border-color: var(--primary-light);}.param-input:focus{border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.15);
+            background: var(--surface-2);}.param-input:disabled{background: var(--surface-3);
+            cursor: not-allowed;
+            opacity: 0.5;}/* Объединённый блок результатов и действий */
+        .combined-block{display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: stretch;}.actions-section{background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            box-shadow: var(--shadow);}.actions-grid{display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;}/* Блок результата */
+        .result-block{background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.25);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 180px;}.result-item{display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;}.result-item:last-child{margin-bottom: 0;}.result-label{font-size: 9px;
+            opacity: 0.85;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;}.result-value{font-size: 16px;
+            font-weight: 700;
+            text-align: right;}.result-discount{display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;}/* Кнопка в корзину */
+        .cart-button{background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(59, 165, 92, 0.25);
+            white-space: nowrap;}.cart-button:hover{background: var(--success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 165, 92, 0.35);}.cart-button:active{transform: translateY(0);}/* Блок быстрых тиражей */
+        .quick-quantities{background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);}.quantities-header{display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--surface-2);}.quantities-title{font-size: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;}.reset-btn{padding: 4px 10px;
+            background: var(--surface-2);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);}.reset-btn:hover{background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+            transform: translateY(-1px);}.copy-all-btn{padding: 4px 10px;
+            background: var(--surface-2);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);}.copy-all-btn:hover{background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-1px);}.quantities-grid{display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;}.qty-card{background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #cbd5e0;
+            border-radius: var(--radius-sm);
+            padding: 8px 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);}.qty-card:hover{background: linear-gradient(135deg, #ffffff, #f1f3f5);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(88, 101, 242, 0.2);}.qty-card.selected{background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border-color: var(--primary-hover);
+            color: white;
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.35);
+            transform: scale(1.05);}.qty-card.selected .qty-value,
+        .qty-card.selected .qty-price,
+        .qty-card.selected .qty-total{color: white;}.qty-value{font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 3px;
+            color: var(--text);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);}.qty-price{font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            font-weight: 500;}.qty-total{font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(88, 101, 242, 0.08);
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin-top: 3px;}.qty-card.selected .qty-total{background: rgba(255, 255, 255, 0.2);
+            color: white;}/* Детали расчёта */
+        .details-section{background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);}.details-header{padding: 10px 12px;
+            background: var(--surface-2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border);}.details-header:hover{background: var(--surface-3);}.details-title{font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);}.details-toggle{width: 18px;
+            height: 18px;
+            display: grid;
+            place-items: center;
+            transition: transform 0.2s;
+            color: var(--text-muted);
+            font-size: 12px;}.details-toggle.open{transform: rotate(180deg);}.details-content{padding: 10px;
+            display: none;
+            font-size: 10px;
+            background: var(--surface-2);}.details-content.show{display: block;}.detail-row{display: flex;
+            justify-content: space-between;
+            padding: 3px 0;}.detail-label{color: var(--text-muted);}.detail-value{font-weight: 600;
+            color: var(--text);}.detail-divider{height: 1px;
+            background: var(--border);
+            margin: 6px 0;}.detail-total{display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);}/* Тост уведомления */
+        .toast{position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--text);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s;
+            z-index: 1000;}.toast.success{background: var(--success);}@keyframes slideIn{from{transform: translateY(100px);
+                opacity: 0;}to{transform: translateY(0);
+                opacity: 1;}}/* Мобильная адаптация */
+        @media (max-width: 768px){.combined-block{grid-template-columns: 1fr;}.result-block{order: -1;}.quantities-grid{grid-template-columns: repeat(4, 1fr);}}@media (max-width: 480px){.params-grid{grid-template-columns: 1fr 1fr;}.quantities-grid{grid-template-columns: repeat(3, 1fr);}.actions-grid{grid-template-columns: 1fr;}}</style>
+</head>
+<body>
+    <div class="container">
+        <!-- Блок 1: Основные параметры -->
+        <div class="params-block">
+            <div class="block-title">📋 ОСНОВНЫЕ ПАРАМЕТРЫ</div>
+            <div class="params-grid">
+                <div class="param-group">
+                    <label class="param-label">Формат</label>
+                    <select class="param-input" id="format">
+                        <option value="euro">Евро (210×99)</option>
+                        <option value="a7">А7 (105×74)</option>
+                        <option value="a6">А6 (148×105)</option>
+                        <option value="a5">А5 (210×148)</option>
+                        <option value="a4" selected>А4 (297×210)</option>
+                        <option value="a3">А3 (420×297)</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Бумага</label>
+                    <select class="param-input" id="paper">
+                        <option value="80">80 гр.</option>
+                        <option value="130">130 гр.</option>
+                        <option value="160_colotech">160 гр. Colotech</option>
+                        <option value="170">170 гр.</option>
+                        <option value="300">300 гр.</option>
+                        <option value="self_adhesive">Самоклейка</option>
+                        <option value="designer">Дизайнерская</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Цветность</label>
+                    <select class="param-input" id="color">
+                        <option value="4+0">4+0</option>
+                        <option value="4+4">4+4</option>
+                        <option value="1+0">1+0</option>
+                        <option value="1+1">1+1</option>
+                        <option value="4+1">4+1</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Количество</label>
+                    <input type="number" class="param-input" id="quantity" value="100" min="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок 2: Постобработка -->
+        <div class="params-block">
+            <div class="block-title">⚙️ ПОСТОБРАБОТКА</div>
+            <div class="params-grid">
+                <div class="param-group">
+                    <label class="param-label">Биговка</label>
+                    <input type="number" class="param-input" id="bigovka" value="0" min="0">
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Фальцовка</label>
+                    <input type="number" class="param-input" id="folding" value="0" min="0">
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Ламинация</label>
+                    <select class="param-input" id="lamination">
+                        <option value="none">Нет</option>
+                        <option value="thin">32 мкр.</option>
+                        <option value="thick">80-100 мкр.</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Закругление</label>
+                    <select class="param-input" id="rounded">
+                        <option value="no">Нет</option>
+                        <option value="yes">Да</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label class="param-label">Резка</label>
+                    <select class="param-input" id="cutting">
+                        <option value="light">Легкая +10%</option>
+                        <option value="auto">Авто +20%</option>
+                        <option value="manual">Ручная +30%</option>
+                        <option value="contour">Контурная</option>
+                        <option value="none">Без резки</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Объединённый блок: Тип расчёта + Результат + Кнопка -->
+        <div class="combined-block">
+            <div class="actions-section">
+                <div class="actions-grid">
+                    <div class="param-group">
+                        <label class="param-label">Тип расчёта</label>
+                        <select class="param-input" id="pricingType">
+                            <option value="retail">Розница</option>
+                            <option value="opt1">Опт1 -5%</option>
+                            <option value="opt2">Опт2 -10%</option>
+                            <option value="opt3">Опт3 -15%</option>
+                            <option value="opt4">Опт4 -20%</option>
+                            <option value="opt5">Опт5 -25%</option>
+                        </select>
+                    </div>
+
+                    <div class="param-group">
+                        <label class="param-label">Своя цена (₽/шт)</label>
+                        <input type="number" class="param-input" id="customPrice" placeholder="Авто" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-block">
+                <div class="result-item">
+                    <span class="result-label">За единицу</span>
+                    <span class="result-value" id="unitPriceDisplay">0₽</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">За тираж</span>
+                    <span class="result-value">
+                        <span id="totalPriceDisplay">0₽</span>
+                        <span class="result-discount" id="discountDisplay" style="display:none;"></span>
+                    </span>
+                </div>
+            </div>
+
+            <button class="cart-button" id="cartBtn">
+                <span>📥</span>
+                <span>В корзину</span>
+            </button>
+        </div>
+
+        <!-- Блок быстрых тиражей -->
+        <div class="quick-quantities">
+            <div class="quantities-header">
+                <div class="quantities-title">🚀 БЫСТРЫЙ ВЫБОР ТИРАЖА</div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="reset-btn" id="resetBtn">
+                        🔄 Сбросить
+                    </button>
+                    <button class="copy-all-btn" id="copyBtn">
+                        📋 Копировать все
+                    </button>
+                </div>
+            </div>
+            <div class="quantities-grid" id="quantitiesGrid">
+                <!-- Карточки тиражей генерируются JS -->
+            </div>
+        </div>
+
+        <!-- Детали расчёта -->
+        <div class="details-section">
+            <div class="details-header" id="detailsHeader">
+                <div class="details-title">
+                    📊 Подробнее о расчёте
+                </div>
+                <div class="details-toggle" id="detailsToggle">▼</div>
+            </div>
+            <div class="details-content" id="detailsContent">
+                <!-- Детали генерируются JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){'use strict';
+
+        // Глобальные переменные
+        let selectedQuantity = 100;
+        let currentCalculation ={};
+        let useCustomPrice = false;
+        let allCalculations ={};
+
+        // Расширенный список тиражей
+        const quantities =[10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 1000, 2000];
+
+        // Функция округления до 0.5
+        function roundToHalf(num){return Math.ceil(num * 2) / 2;}
+
+        // Функции расчёта
+        function getFormatCoefficient(format){const coefficients ={"euro": 0.33,
+                "a7": 0.125,
+                "a6": 0.25,
+                "a5": 0.5,
+                "a4": 1,
+                "a3": 2};
+            return coefficients[format]|| 1;}
+
+        function getColorPrice(color, quantity){// Новая ценовая структура на основе количества штук
+            if(color === "4+0"){if(quantity <= 10) return 35;
+                if(quantity <= 20) return 31;
+                if(quantity <= 30) return 28;
+                if(quantity <= 40) return 26;
+                if(quantity <= 50) return 24;
+                if(quantity <= 100) return 20;
+                if(quantity <= 200) return 17;
+                if(quantity <= 300) return 16;
+                if(quantity <= 400) return 15;
+                if(quantity <= 500) return 14;
+                if(quantity <= 1000) return 13;
+                return 12;}
+            if(color === "4+4"){if(quantity <= 10) return 66;
+                if(quantity <= 20) return 59;
+                if(quantity <= 30) return 53;
+                if(quantity <= 40) return 49;
+                if(quantity <= 50) return 46;
+                if(quantity <= 100) return 38;
+                if(quantity <= 200) return 32;
+                if(quantity <= 300) return 30;
+                if(quantity <= 400) return 28;
+                if(quantity <= 500) return 26;
+                if(quantity <= 1000) return 24;
+                return 22;}
+            if(color === "1+0") return 10;
+            if(color === "1+1") return 20;
+            if(color === "4+1"){// Среднее между 4+0 и 4+4
+                if(quantity <= 10) return 50;
+                if(quantity <= 20) return 45;
+                if(quantity <= 30) return 40;
+                if(quantity <= 40) return 37;
+                if(quantity <= 50) return 35;
+                if(quantity <= 100) return 29;
+                if(quantity <= 200) return 24;
+                if(quantity <= 300) return 23;
+                if(quantity <= 400) return 21;
+                if(quantity <= 500) return 20;
+                if(quantity <= 1000) return 18;
+                return 17;}
+            return 0;}
+
+        function getPaperPrice(paper){const prices ={"80": 0,
+                "130": 7,
+                "160_colotech": 10,
+                "170": 10,
+                "300": 16,
+                "self_adhesive": 30,
+                "designer": 85};
+            return prices[paper]|| 0;}
+
+        function getLaminationPrice(lamination){if(lamination === "thin") return 25;
+            if(lamination === "thick") return 40;
+            return 0;}
+
+        // Основная функция расчёта
+        function calculate(quantity){try{const format = document.getElementById("format").value;
+                const color = document.getElementById("color").value;
+                const paper = document.getElementById("paper").value;
+                const bigovka = parseFloat(document.getElementById("bigovka").value) || 0;
+                const folding = parseFloat(document.getElementById("folding").value) || 0;
+                const lamination = document.getElementById("lamination").value;
+                const cutting = document.getElementById("cutting").value;
+                const pricingType = document.getElementById("pricingType").value;
+                const rounded = document.getElementById("rounded").value;
+
+                const coeff = getFormatCoefficient(format);
+                const numA4 = Math.ceil(quantity * coeff);
+
+                // Используем quantity для определения цены
+                const priceColor = getColorPrice(color, quantity);
+                const printingCost = priceColor * numA4;
+                const paperCost = getPaperPrice(paper) * numA4;
+                const laminationCost = getLaminationPrice(lamination) * numA4;
+
+                let finishingCost = 0;
+                if(bigovka > 0){finishingCost = bigovka * 5 * quantity;}else if(folding > 0){finishingCost = folding * 2 * quantity;}
+
+                const roundingCost = (rounded === "yes") ? 2 * quantity : 0;
+
+                let baseCost = printingCost + paperCost + laminationCost + finishingCost + roundingCost;
+
+                // Расчёт резки
+                let cuttingCost = 0;
+                if(cutting === "contour"){cuttingCost = 25 * numA4;}else if(cutting === "light"){const baseForCutting = printingCost + paperCost + laminationCost;
+                    cuttingCost = baseForCutting * 0.10;}else if(cutting === "auto"){const baseForCutting = printingCost + paperCost + laminationCost;
+                    cuttingCost = baseForCutting * 0.20;}else if(cutting === "manual"){const baseForCutting = printingCost + paperCost + laminationCost;
+                    cuttingCost = baseForCutting * 0.30;}
+
+                baseCost += cuttingCost;
+
+                // Применяем скидку
+                let discountFactor = 1;
+                const discounts ={"opt1": 0.95,
+                    "opt2": 0.90,
+                    "opt3": 0.85,
+                    "opt4": 0.80,
+                    "opt5": 0.75};
+                discountFactor = discounts[pricingType]|| 1;
+
+                baseCost *= discountFactor;
+
+                // Сначала получаем цену за единицу
+                let unitPrice = quantity ? (baseCost / quantity) : 0;
+
+                // Округляем цену за единицу до 0.5₽
+                unitPrice = roundToHalf(unitPrice);
+
+                // Пересчитываем общую стоимость на основе округленной цены за единицу
+                const totalPrice = unitPrice * quantity;
+
+                return{quantity: quantity,
+                    unitPrice: unitPrice,
+                    totalPrice: totalPrice,
+                    details:{format, coeff, numA4, printingCost, paperCost,
+                        laminationCost, finishingCost, roundingCost,
+                        cuttingCost, discountFactor, color, paper,
+                        bigovka, folding, lamination, rounded,
+                        cutting, pricingType}};}catch(error){console.error('Ошибка расчёта:', error);
+                return{quantity: 0, unitPrice: 0, totalPrice: 0, details:{}};}}
+
+        // Обновление всех расчётов
+        function updateCalculation(){useCustomPrice = false;
+            document.getElementById('customPrice').value = '';
+            updateCuttingOptions();
+            currentCalculation = calculate(selectedQuantity);
+            renderQuantities();
+            updateResultDisplay();
+            updateDetails();}
+
+        // Обновление при изменении количества
+        function updateQuantityFromInput(){const input = document.getElementById('quantity');
+            let qty = parseInt(input.value);
+            if(isNaN(qty) || qty < 1){qty = 100;
+                input.value = qty;}
+            selectedQuantity = qty;
+            updateCalculation();}
+
+        // Обновление с ручной ценой
+        function updateWithCustomPrice(){const input = document.getElementById('customPrice');
+            if(!input) return;
+
+            const customPrice = parseFloat(input.value);
+            if(!isNaN(customPrice) && customPrice > 0){useCustomPrice = true;
+                currentCalculation = calculate(selectedQuantity);
+                currentCalculation.unitPrice = customPrice; // Кастомная цена не округляется
+                currentCalculation.totalPrice = customPrice * selectedQuantity; // Общая сумма тоже не округляется
+                updateResultDisplay();
+                updateDetails();}else if(input.value === ''){useCustomPrice = false;
+                updateCalculation();}}
+
+        // Обновление блока результата
+        function updateResultDisplay(){const unitPrice = currentCalculation.unitPrice || 0;
+            const totalPrice = currentCalculation.totalPrice || 0;
+            const pricingType = document.getElementById('pricingType').value;
+
+            // Для кастомной цены показываем как есть, для расчетной - уже округленную
+            const displayUnitPrice = useCustomPrice ? unitPrice : unitPrice;
+            const displayTotalPrice = useCustomPrice ? totalPrice : totalPrice;
+
+            document.getElementById('unitPriceDisplay').textContent = displayUnitPrice.toFixed(2) + '₽';
+            document.getElementById('totalPriceDisplay').textContent = displayTotalPrice.toFixed(0) + '₽';
+
+            const discountDisplay = document.getElementById('discountDisplay');
+            if(pricingType !== 'retail'){discountDisplay.textContent = pricingType.toUpperCase();
+                discountDisplay.style.display = 'inline-block';}else{discountDisplay.style.display = 'none';}}
+
+        // Отрисовка карточек тиражей
+        function renderQuantities(){const grid = document.getElementById('quantitiesGrid');
+            if(!grid){console.error('Элемент quantitiesGrid не найден');
+                return;}
+            grid.innerHTML = '';
+
+            quantities.forEach(qty =>{try{const calc = calculate(qty);
+                    allCalculations[qty]= calc;
+
+                    const card = document.createElement('div');
+                    card.className = 'qty-card' + (qty === selectedQuantity ? ' selected' : '');
+                    card.onclick = () => selectQuantity(qty);
+
+                    const unitPrice = calc.unitPrice || 0;
+                    const totalPrice = calc.totalPrice || 0;
+
+                    card.innerHTML = `
+                        <div class="qty-value">${qty}шт</div>
+                        <div class="qty-price">${unitPrice.toFixed(2)}₽</div>
+                        <div class="qty-total">${totalPrice.toFixed(0)}₽</div>
+                    `;
+
+                    grid.appendChild(card);}catch(error){console.error(`Ошибка при создании карточки для ${qty}:`, error);}});}
+
+        // Выбор тиража
+        function selectQuantity(qty){selectedQuantity = qty;
+            document.getElementById('quantity').value = qty;
+            currentCalculation = calculate(qty);
+            useCustomPrice = false;
+            document.getElementById('customPrice').value = '';
+            renderQuantities();
+            updateResultDisplay();
+            updateDetails();}
+
+        // Функция сброса всех параметров
+        function resetCalculator(){// Сброс основных параметров
+            document.getElementById('format').value = 'a4';
+            document.getElementById('paper').value = '80';
+            document.getElementById('color').value = '4+0';
+            document.getElementById('quantity').value = '100';
+
+            // Сброс постобработки
+            document.getElementById('bigovka').value = '0';
+            document.getElementById('folding').value = '0';
+            document.getElementById('lamination').value = 'none';
+            document.getElementById('rounded').value = 'no';
+            document.getElementById('cutting').value = 'light';
+
+            // Сброс типа расчета и кастомной цены
+            document.getElementById('pricingType').value = 'retail';
+            document.getElementById('customPrice').value = '';
+
+            // Сброс выбранного тиража
+            selectedQuantity = 100;
+            useCustomPrice = false;
+
+            // Пересчет всего
+            updateCalculation();
+
+            showToast('Параметры сброшены', 'success');}
+
+        // Копирование всех тиражей
+        function copyAllQuantities(){const format = document.getElementById("format").value;
+            const paper = document.getElementById("paper").value;
+            const color = document.getElementById("color").value;
+
+            const formatLabels ={'euro': 'Евро', 'a7': 'А7', 'a6': 'А6',
+                'a5': 'А5', 'a4': 'А4', 'a3': 'А3'};
+
+            const paperLabels ={'80': '80 гр', '130': '130 гр', '160_colotech': '160 гр',
+                '170': '170 гр', '300': '300 гр', 'self_adhesive': 'Самоклейка',
+                'designer': 'Дизайнерская'};
+
+            let text = `Подготовили расчет по вашему запросу: 👇\n\n`;
+            text += `📋 Цифровая печать ${formatLabels[format]}, ${color}• ${paperLabels[paper]}\n`;
+            text += `─────────\n`;
+
+            quantities.forEach(qty =>{const calc = allCalculations[qty]|| calculate(qty);
+                let emoji = qty >= 500 ? '🟢' : qty >= 300 ? '🟠' : '🔴';
+                let hot = qty >= 500 ? ' 🔥' : '';
+                text += `${emoji}${qty}шт - ${calc.unitPrice.toFixed(2)}₽ = ${calc.totalPrice.toFixed(0)}₽${hot}\n`;});
+
+            text += `──────────`;
+
+            navigator.clipboard.writeText(text).then(() =>{showToast('Скопировано в буфер обмена', 'success');});}
+
+        // Обновление опций резки
+        function updateCuttingOptions(){const format = document.getElementById("format").value;
+            const paper = document.getElementById("paper").value;
+            const cuttingSelect = document.getElementById("cutting");
+            const formatSelect = document.getElementById("format");
+
+            // Контурная резка только для самоклейки
+            const contourOption = Array.from(cuttingSelect.options).find(o => o.value === "contour");
+            if(contourOption){contourOption.disabled = paper !== "self_adhesive";}
+
+            if(cuttingSelect.value === "contour" && paper !== "self_adhesive"){cuttingSelect.value = "light";}
+
+            // Если контурная резка - только А3
+            if(cuttingSelect.value === "contour"){formatSelect.value = "a3";
+                Array.from(formatSelect.options).forEach(option =>{option.disabled = option.value !== "a3";});}else{Array.from(formatSelect.options).forEach(option =>{option.disabled = false;});}
+
+            // Без резки только для А4 и А3
+            const noneOption = Array.from(cuttingSelect.options).find(o => o.value === "none");
+            if(noneOption){noneOption.disabled = !(format === "a4" || format === "a3");}
+
+            if(cuttingSelect.value === "none" && !(format === "a4" || format === "a3")){cuttingSelect.value = "light";}}
+
+        // Обновление деталей расчёта
+        function updateDetails(){const calc = currentCalculation.details ||{};
+            const content = document.getElementById('detailsContent');
+
+            const labels ={format:{'euro': 'Евро', 'a7': 'А7', 'a6': 'А6', 'a5': 'А5', 'a4': 'А4', 'a3': 'А3'},
+                paper:{'80': '80 гр.', '130': '130 гр.', '160_colotech': '160 гр. Colotech',
+                        '170': '170 гр.', '300': '300 гр.', 'self_adhesive': 'Самоклейка', 'designer': 'Дизайнерская'},
+                cutting:{'light': 'Легкая (+10%)', 'auto': 'Авто (+20%)', 'manual': 'Ручная (+30%)', 'contour': 'Контурная', 'none': 'Без резки'}};
+
+            let html = `
+                <div class="detail-row">
+                    <span class="detail-label">Формат:</span>
+                    <span class="detail-value">${labels.format[calc.format]|| calc.format}(коэфф. ${calc.coeff || 0})</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Листов А4:</span>
+                    <span class="detail-value">${calc.numA4 || 0}</span>
+                </div>
+                <div class="detail-divider"></div>`;
+
+            if(calc.printingCost > 0) html += `<div class="detail-row"><span class="detail-label">Печать:</span><span class="detail-value">${calc.printingCost.toFixed(2)}₽</span></div>`;
+            if(calc.paperCost > 0) html += `<div class="detail-row"><span class="detail-label">Бумага:</span><span class="detail-value">${calc.paperCost.toFixed(2)}₽</span></div>`;
+            if(calc.laminationCost > 0) html += `<div class="detail-row"><span class="detail-label">Ламинация:</span><span class="detail-value">${calc.laminationCost.toFixed(2)}₽</span></div>`;
+            if(calc.cuttingCost > 0) html += `<div class="detail-row"><span class="detail-label">Резка:</span><span class="detail-value">${calc.cuttingCost.toFixed(2)}₽</span></div>`;
+
+            const totalPrice = currentCalculation.totalPrice || 0;
+            html += `<div class="detail-divider"></div>
+                <div class="detail-total">
+                    <span>Итого за ${selectedQuantity}шт:</span>
+                    <span>${totalPrice.toFixed(2)}₽</span>
+                </div>`;
+
+            content.innerHTML = html;}
+
+        // Переключение деталей
+        function toggleDetails(){const content = document.getElementById('detailsContent');
+            const toggle = document.getElementById('detailsToggle');
+
+            if(content.classList.contains('show')){content.classList.remove('show');
+                toggle.classList.remove('open');}else{content.classList.add('show');
+                toggle.classList.add('open');}}
+
+        // ✅ ДОРАБОТАННАЯ ФУНКЦИЯ: Добавление в корзину
+        function addToCart(){
+            const calc = currentCalculation.details ||{};
+
+            const labels ={
+                format:{'euro': 'Евро', 'a7': 'А7', 'a6': 'А6', 'a5': 'А5', 'a4': 'А4', 'a3': 'А3'},
+                paper:{'80': '80 гр.', '130': '130 гр.', '160_colotech': '160 гр.', '170': '170 гр.',
+                        '300': '300 гр.', 'self_adhesive': 'Самоклейка', 'designer': 'Дизайнерская'},
+                lamination:{'none': '', 'thin': 'Ламинация 32 мкр', 'thick': 'Ламинация 80-100 мкр'}
+            };
+
+            // 📌 Расшифровка цветности с пояснениями
+            const colorDescriptions ={
+                '4+0': '4+0 (односторонняя)',
+                '4+4': '4+4 (двухсторонняя)',
+                '1+0': '1+0 (односторонняя ч/б)',
+                '1+1': '1+1 (двухсторонняя ч/б)',
+                '4+1': '4+1 (полноцвет + ч/б)'
+            };
+
+            const unitPrice = useCustomPrice ?
+                parseFloat(document.getElementById('customPrice').value) :
+                currentCalculation.unitPrice;
+
+            // 📌 Формируем массив дополнительных параметров (БЕЗ резки!)
+            let additionalParams =[];
+
+            // Ламинация
+            if(calc.lamination && calc.lamination !== 'none'){
+                additionalParams.push(labels.lamination[calc.lamination]);
+            }
+
+            // Биговка
+            if(calc.bigovka > 0){
+                additionalParams.push(`Биговка ${calc.bigovka} биг.`);
+            }
+
+            // Фальцовка
+            if(calc.folding > 0){
+                additionalParams.push(`Фальцовка ${calc.folding} фальц.`);
+            }
+
+            // Закругление углов
+            if(calc.rounded === 'yes'){
+                additionalParams.push('Закругление углов');
+            }
+
+            // 📌 Собираем строку info с расшифровкой цветности
+            let info = `${labels.paper[calc.paper]}, ${colorDescriptions[calc.color] || calc.color}`;
+
+            // Добавляем дополнительные параметры через точку с запятой
+            if(additionalParams.length > 0){
+                info += '; ' + additionalParams.join(', ');
+            }
+
+            const item ={
+                name: `Цифровая печать ${labels.format[calc.format]}`,
+                info: info,
+                qty: `${selectedQuantity}шт`,
+                unit: `${unitPrice.toFixed(2)}₽`,
+                price: unitPrice * selectedQuantity
+            };
+
+            if(window.parent !== window){
+                window.parent.postMessage({type: 'addToCart', item: item}, '*');
+            }
+
+            showToast('Добавлено в корзину', 'success');
+        }
+
+        // Показ уведомления
+        function showToast(message, type = ''){const existing = document.querySelector('.toast');
+            if(existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (type ? ' ' + type : '');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 2500);}
+
+        // Инициализация
+        function init(){// Привязка событий
+            document.getElementById('format').addEventListener('change', updateCalculation);
+            document.getElementById('paper').addEventListener('change', updateCalculation);
+            document.getElementById('color').addEventListener('change', updateCalculation);
+            document.getElementById('quantity').addEventListener('change', updateQuantityFromInput);
+            document.getElementById('bigovka').addEventListener('change', updateCalculation);
+            document.getElementById('folding').addEventListener('change', updateCalculation);
+            document.getElementById('lamination').addEventListener('change', updateCalculation);
+            document.getElementById('rounded').addEventListener('change', updateCalculation);
+            document.getElementById('cutting').addEventListener('change', updateCalculation);
+            document.getElementById('pricingType').addEventListener('change', updateCalculation);
+            document.getElementById('customPrice').addEventListener('change', updateWithCustomPrice);
+            document.getElementById('cartBtn').addEventListener('click', addToCart);
+            document.getElementById('copyBtn').addEventListener('click', copyAllQuantities);
+            document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+            document.getElementById('detailsHeader').addEventListener('click', toggleDetails);
+
+            // Делаем функции доступными глобально для карточек тиражей
+            window.selectQuantity = selectQuantity;
+
+            // Начальный расчёт
+            currentCalculation = calculate(selectedQuantity);
+            renderQuantities();
+            updateResultDisplay();
+            updateDetails();
+            updateCuttingOptions();
+
+            console.log('Калькулятор инициализирован');}
+
+        // Запуск
+        if(document.readyState === 'loading'){document.addEventListener('DOMContentLoaded', init);}else{init();}
+    })();
+    </script>
+</body>
+</html>
