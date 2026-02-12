@@ -353,10 +353,7 @@
 
                 <div class="param-group">
                     <label class="param-label">Скоба</label>
-                    <select class="param-input" id="staple">
-                        <option value="no">Нет</option>
-                        <option value="yes">Да</option>
-                    </select>
+                    <input type="number" class="param-input" id="staple" value="0" min="0">
                 </div>
 
                 <div class="param-group">
@@ -665,7 +662,7 @@
                 const cutting = document.getElementById("cutting").value;
                 const pricingType = document.getElementById("pricingType").value;
                 const rounded = document.getElementById("rounded").value;
-                const staple = document.getElementById("staple").value;
+                const staple = parseFloat(document.getElementById("staple").value) || 0;
 
                 let customWidth = null;
                 let customHeight = null;
@@ -710,7 +707,7 @@
                 }
 
                 const roundingCost = (rounded === "yes") ? 2 * quantity : 0;
-                const stapleCost = (staple === "yes") ? 5 * quantity : 0;
+                const stapleCost = staple * 5 * quantity;
 
                 let baseCost = printingCost + paperCost + laminationCost + finishingCost + roundingCost + stapleCost;
 
@@ -935,7 +932,7 @@
             // Сброс постобработки
             document.getElementById('bigovka').value = '0';
             document.getElementById('folding').value = '0';
-            document.getElementById('staple').value = 'no';
+            document.getElementById('staple').value = '0';
             document.getElementById('lamination').value = 'none';
             document.getElementById('rounded').value = 'no';
             document.getElementById('cutting').value = 'light';
@@ -1174,8 +1171,8 @@
             }
 
             // Скоба
-            if(calc.staple === 'yes'){
-                additionalParams.push('Скоба');
+            if(calc.staple > 0){
+                additionalParams.push(`Скоба ${calc.staple} шт.`);
             }
 
             // Закругление углов
