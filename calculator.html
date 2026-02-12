@@ -668,6 +668,8 @@
                 let customWidth = null;
                 let customHeight = null;
                 let itemsOnSheet = null;
+                let coeff = 0;
+                let numA4 = 0;
 
                 // Для индивидуального размера
                 if(format === 'custom'){
@@ -687,8 +689,6 @@
                 }
 
                 // Расчёт количества листов A4
-                let numA4;
-                let coeff;
                 if(format === 'custom'){
                     // Индивидуальный формат: считаем целыми физическими листами А3
                     // Даже 1 изделие = 1 целый лист А3 = 2 А4
