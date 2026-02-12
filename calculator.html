@@ -1047,17 +1047,29 @@
                 cuttingSelect.value = "light";
             }
 
-            // Самоклейка — только цветность 4+4
+            // Самоклейка — только цветность 4+0
             const colorSelect = document.getElementById("color");
             if(paper === "self_adhesive"){
-                colorSelect.value = "4+4";
+                colorSelect.value = "4+0";
                 Array.from(colorSelect.options).forEach(option =>{
-                    option.disabled = option.value !== "4+4";
+                    option.disabled = option.value !== "4+0";
                 });
             }else{
                 Array.from(colorSelect.options).forEach(option =>{
                     option.disabled = false;
                 });
+            }
+
+            // Дизайнерская — формат А3 недоступен
+            const a3Option = Array.from(formatSelect.options).find(o => o.value === "a3");
+            if(paper === "designer"){
+                if(a3Option) a3Option.disabled = true;
+                if(formatSelect.value === "a3"){
+                    formatSelect.value = "a4";
+                }
+            }else if(cuttingSelect.value !== "contour"){
+                // Разблокируем А3, если не контурная резка (та уже блокирует всё кроме А3)
+                if(a3Option) a3Option.disabled = false;
             }
         }
 
