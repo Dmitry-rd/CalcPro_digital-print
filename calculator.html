@@ -293,7 +293,7 @@
                 <!-- Поля индивидуального размера -->
                 <div class="custom-size-fields" id="customSizeFields">
                     <div class="custom-size-info">
-                        📏 Печатный лист: 305×215 мм | Мин: 10×10 мм | Макс: 305×215 мм
+                        📏 Печатный лист: 305×430 мм | Мин: 10×10 мм | Макс: 305×430 мм
                     </div>
                     <div class="param-group">
                         <label class="param-label">Длина (мм)</label>
@@ -301,7 +301,7 @@
                     </div>
                     <div class="param-group">
                         <label class="param-label">Ширина (мм)</label>
-                        <input type="number" class="param-input" id="customHeight" placeholder="50" min="10" max="215">
+                        <input type="number" class="param-input" id="customHeight" placeholder="50" min="10" max="430">
                     </div>
                     <div class="error-message" id="sizeError"></div>
                 </div>
@@ -477,7 +477,7 @@
 
         // Константы печатного листа
         const SHEET_WIDTH = 305;  // мм
-        const SHEET_HEIGHT = 215; // мм
+        const SHEET_HEIGHT = 430; // мм (А3 лист)
         const MIN_SIZE = 10;      // мм
 
         // Расширенный список тиражей
@@ -566,9 +566,10 @@
                     return 0;
                 }
 
-                // Коэффициент = 1 / количество_на_листе
-                // Например: на лист помещается 6 шт → коэфф = 1/6 = 0.167
-                return 1 / layout.count;
+                // Лист 305×430 = А3 = 2 листа А4, все цены за А4
+                // Коэффициент = 2 / количество_на_листе
+                // Например: на лист помещается 12 шт → коэфф = 2/12 = 0.167
+                return 2 / layout.count;
             }
 
             // Стандартные форматы
