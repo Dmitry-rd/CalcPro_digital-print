@@ -352,6 +352,14 @@
                 </div>
 
                 <div class="param-group">
+                    <label class="param-label">Скоба</label>
+                    <select class="param-input" id="staple">
+                        <option value="no">Нет</option>
+                        <option value="yes">Да</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
                     <label class="param-label">Ламинация</label>
                     <select class="param-input" id="lamination">
                         <option value="none">Нет</option>
@@ -657,6 +665,7 @@
                 const cutting = document.getElementById("cutting").value;
                 const pricingType = document.getElementById("pricingType").value;
                 const rounded = document.getElementById("rounded").value;
+                const staple = document.getElementById("staple").value;
 
                 let customWidth = null;
                 let customHeight = null;
@@ -701,8 +710,9 @@
                 }
 
                 const roundingCost = (rounded === "yes") ? 2 * quantity : 0;
+                const stapleCost = (staple === "yes") ? 5 * quantity : 0;
 
-                let baseCost = printingCost + paperCost + laminationCost + finishingCost + roundingCost;
+                let baseCost = printingCost + paperCost + laminationCost + finishingCost + roundingCost + stapleCost;
 
                 // Расчёт резки
                 let cuttingCost = 0;
@@ -751,8 +761,8 @@
                     details:{
                         format, coeff, numA4, printingCost, paperCost,
                         laminationCost, finishingCost, roundingCost,
-                        cuttingCost, discountFactor, color, paper,
-                        bigovka, folding, lamination, rounded,
+                        stapleCost, cuttingCost, discountFactor, color, paper,
+                        bigovka, folding, staple, lamination, rounded,
                         cutting, pricingType, customWidth, customHeight,
                         itemsOnSheet
                     }
@@ -925,6 +935,7 @@
             // Сброс постобработки
             document.getElementById('bigovka').value = '0';
             document.getElementById('folding').value = '0';
+            document.getElementById('staple').value = 'no';
             document.getElementById('lamination').value = 'none';
             document.getElementById('rounded').value = 'no';
             document.getElementById('cutting').value = 'light';
@@ -1080,6 +1091,7 @@
             if(calc.printingCost > 0) html += `<div class="detail-row"><span class="detail-label">Печать:</span><span class="detail-value">${calc.printingCost.toFixed(2)}₽</span></div>`;
             if(calc.paperCost > 0) html += `<div class="detail-row"><span class="detail-label">Бумага:</span><span class="detail-value">${calc.paperCost.toFixed(2)}₽</span></div>`;
             if(calc.laminationCost > 0) html += `<div class="detail-row"><span class="detail-label">Ламинация:</span><span class="detail-value">${calc.laminationCost.toFixed(2)}₽</span></div>`;
+            if(calc.stapleCost > 0) html += `<div class="detail-row"><span class="detail-label">Скоба:</span><span class="detail-value">${calc.stapleCost.toFixed(2)}₽</span></div>`;
             if(calc.cuttingCost > 0) html += `<div class="detail-row"><span class="detail-label">Резка:</span><span class="detail-value">${calc.cuttingCost.toFixed(2)}₽</span></div>`;
 
             const totalPrice = currentCalculation.totalPrice || 0;
@@ -1161,6 +1173,11 @@
                 additionalParams.push(`Фальцовка ${calc.folding} фальц.`);
             }
 
+            // Скоба
+            if(calc.staple === 'yes'){
+                additionalParams.push('Скоба');
+            }
+
             // Закругление углов
             if(calc.rounded === 'yes'){
                 additionalParams.push('Закругление углов');
@@ -1212,6 +1229,7 @@
             document.getElementById('bigovka').addEventListener('change', updateCalculation);
             document.getElementById('folding').addEventListener('change', updateCalculation);
             document.getElementById('lamination').addEventListener('change', updateCalculation);
+            document.getElementById('staple').addEventListener('change', updateCalculation);
             document.getElementById('rounded').addEventListener('change', updateCalculation);
             document.getElementById('cutting').addEventListener('change', updateCalculation);
             document.getElementById('pricingType').addEventListener('change', updateCalculation);
