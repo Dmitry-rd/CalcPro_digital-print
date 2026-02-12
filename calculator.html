@@ -724,7 +724,7 @@
                 // Расчёт резки
                 let cuttingCost = 0;
                 if(cutting === "contour"){
-                    cuttingCost = 25 * numA4;
+                    cuttingCost = 40 * numA4;
                 }else if(cutting === "light"){
                     const baseForCutting = printingCost + paperCost + laminationCost;
                     cuttingCost = baseForCutting * 0.10;
@@ -1045,6 +1045,19 @@
 
             if(cuttingSelect.value === "none" && !(format === "a4" || format === "a3")){
                 cuttingSelect.value = "light";
+            }
+
+            // Самоклейка — только цветность 4+4
+            const colorSelect = document.getElementById("color");
+            if(paper === "self_adhesive"){
+                colorSelect.value = "4+4";
+                Array.from(colorSelect.options).forEach(option =>{
+                    option.disabled = option.value !== "4+4";
+                });
+            }else{
+                Array.from(colorSelect.options).forEach(option =>{
+                    option.disabled = false;
+                });
             }
         }
 
