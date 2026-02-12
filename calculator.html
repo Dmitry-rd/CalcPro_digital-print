@@ -688,13 +688,15 @@
 
                 // Расчёт количества листов A4
                 let numA4;
+                let coeff;
                 if(format === 'custom'){
                     // Индивидуальный формат: считаем целыми физическими листами А3
                     // Даже 1 изделие = 1 целый лист А3 = 2 А4
                     const physicalSheets = Math.ceil(quantity / itemsOnSheet);
                     numA4 = physicalSheets * 2;
+                    coeff = numA4 / quantity; // для отображения в деталях
                 }else{
-                    const coeff = getFormatCoefficient(format, customWidth, customHeight);
+                    coeff = getFormatCoefficient(format, customWidth, customHeight);
                     if(coeff === 0){
                         return{quantity: 0, unitPrice: 0, totalPrice: 0, details:{}, error: true};
                     }
