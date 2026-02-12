@@ -686,13 +686,20 @@
                     }
                 }
 
-                const coeff = getFormatCoefficient(format, customWidth, customHeight);
-
-                if(coeff === 0){
-                    return{quantity: 0, unitPrice: 0, totalPrice: 0, details:{}, error: true};
+                // Расчёт количества листов A4
+                let numA4;
+                if(format === 'custom'){
+                    // Индивидуальный формат: считаем целыми физическими листами А3
+                    // Даже 1 изделие = 1 целый лист А3 = 2 А4
+                    const physicalSheets = Math.ceil(quantity / itemsOnSheet);
+                    numA4 = physicalSheets * 2;
+                }else{
+                    const coeff = getFormatCoefficient(format, customWidth, customHeight);
+                    if(coeff === 0){
+                        return{quantity: 0, unitPrice: 0, totalPrice: 0, details:{}, error: true};
+                    }
+                    numA4 = Math.ceil(quantity * coeff);
                 }
-
-                const numA4 = Math.ceil(quantity * coeff);
 
                 // Используем quantity для определения цены
                 const priceColor = getColorPrice(color, quantity);
