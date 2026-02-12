@@ -860,7 +860,7 @@
             }
 
             document.getElementById('unitPriceDisplay').textContent = unitPrice.toFixed(2) + '₽';
-            document.getElementById('totalPriceDisplay').textContent = totalPrice.toFixed(0) + '₽';
+            document.getElementById('totalPriceDisplay').textContent = totalPrice.toFixed(2) + '₽';
 
             const discountDisplay = document.getElementById('discountDisplay');
             if(pricingType !== 'retail'){
@@ -905,7 +905,7 @@
                     card.innerHTML = `
                         <div class="qty-value">${qty}шт</div>
                         <div class="qty-price">${unitPrice.toFixed(2)}₽</div>
-                        <div class="qty-total">${totalPrice.toFixed(0)}₽</div>
+                        <div class="qty-total">${totalPrice.toFixed(2)}₽</div>
                     `;
 
                     grid.appendChild(card);
@@ -998,7 +998,7 @@
                 if(calc.error) return;
                 let emoji = qty >= 500 ? '🟢' : qty >= 300 ? '🟠' : '🔴';
                 let hot = qty >= 500 ? ' 🔥' : '';
-                text += `${emoji}${qty}шт - ${calc.unitPrice.toFixed(2)}₽ = ${calc.totalPrice.toFixed(0)}₽${hot}\n`;
+                text += `${emoji}${qty}шт - ${calc.unitPrice.toFixed(2)}₽ = ${calc.totalPrice.toFixed(2)}₽${hot}\n`;
             });
 
             text += `──────────`;
